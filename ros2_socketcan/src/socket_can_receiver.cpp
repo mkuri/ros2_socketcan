@@ -30,6 +30,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdio>
+#include <iostream>
 
 namespace drivers
 {
@@ -116,6 +117,8 @@ void SocketCanReceiver::wait(const std::chrono::nanoseconds timeout) const
   if (decltype(timeout)::zero() < timeout) {
     auto c_timeout = to_timeval(timeout);
     auto read_set = single_set(m_file_descriptor);
+    std::cerr << "c_timeout: " << c_timeout.tv_sec << " " << c_timeout.tv_usec << std::endl;
+    std::cerr << "read_set: " << read_set.fds_bits << std::endl;
     // Wait
     if (0 == select(m_file_descriptor + 1, &read_set, NULL, NULL, &c_timeout)) {
       throw SocketCanTimeout{"CAN Receive Timeout"};
@@ -134,6 +137,7 @@ CanId SocketCanReceiver::receive(void * const data, const std::chrono::nanosecon
     throw std::runtime_error{"attempted to read standard frame from FD socket"};
   }
 
+  std::cerr << "before wait" << std::endl;
   wait(timeout);
   // Read
   struct can_frame frame;

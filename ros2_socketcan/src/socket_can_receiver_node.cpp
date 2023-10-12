@@ -148,6 +148,7 @@ void SocketCanReceiverNode::receive()
 
       try {
         receive_id = receiver_->receive(frame_msg.data.data(), interval_ns_);
+        std::cerr << "receive_id: " << receive_id.get() << std::endl;
       } catch (const std::exception & ex) {
         RCLCPP_WARN_THROTTLE(
           this->get_logger(), *this->get_clock(), 1000,
